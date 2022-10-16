@@ -7,6 +7,8 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     public GameObject enemyPrefab;
     public GameObject powerupPrefab;
+    private PlayerController playerControllerScript;
+
     private float spawnRange = 9;
     public int enemyCount;
     public uint waveNumber = 1;
@@ -15,11 +17,13 @@ public class SpawnManager : MonoBehaviour
     {
         SpawnEnemyWave(waveNumber);
         Instantiate(powerupPrefab, GenerateSpawnPosition(), powerupPrefab.transform.rotation);
+        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
+
     }
     void Update()
     {
         enemyCount = FindObjectsOfType<Enemy>().Length;
-        if(enemyCount == 0)
+        if(enemyCount == 0 && playerControllerScript.isGameOver == false)
         {
             waveNumber++;
             SpawnEnemyWave(waveNumber);

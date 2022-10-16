@@ -5,11 +5,16 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
-    public float speed = 5.0f;
     private GameObject focalPoint;
-    public bool hasPowerup = false;
-    private float powerUpStrenght = 10f;
     public GameObject powerupIndicator;
+
+
+    public bool hasPowerup = false;
+    public bool isGameOver = false;
+
+    public float speed = 5.0f;
+    private float powerUpStrenght = 10f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,10 +25,32 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        isPlayerDie();
+        MovePlayer();
+        StopPlayer();
+
+
+    }
+    private void MovePlayer()
+    {
         float forwardInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward* forwardInput * speed);
+        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
-        
+    }
+    private void StopPlayer()
+    {
+        if (transform.position.y < -50)
+        {
+            transform.position = new Vector3(0, -50, 0);
+
+        }
+    }
+    private void isPlayerDie()
+    {
+        if (playerRb.transform.position.y < -3)
+        {
+            isGameOver = true;
+        }
     }
 
     IEnumerator PowerupCountdownRoutine()
@@ -51,7 +78,7 @@ public class PlayerController : MonoBehaviour
             Rigidbody enemyRigitbody = collision.gameObject.GetComponent<Rigidbody>();
             Vector3 awayFromPlayer = collision.gameObject.transform.position - transform.position;
             enemyRigitbody.AddForce(awayFromPlayer * powerUpStrenght, ForceMode.Impulse);
-            Debug.Log("Collided with: " + collision.gameObject.name + " with powerup set to  " + hasPowerup);
+          //  Debug.Log("Collided with: " + collision.gameObject.name + " with powerup set to  " + hasPowerup);
         }
     }
 }
